@@ -1,0 +1,72 @@
+# 1. ткинтер + pickle
+from tkinter import *
+from tkinter import messagebox
+import pickle
+
+# 2. редактирую окно
+root = Tk()
+root.geometry('300x500')
+root.title('Войти в систему')
+
+
+# 3. функция регистрации
+def registration():
+    text = Label(text='Для входа в систему - зарегистрируйтесь')
+    text.pack()
+    text_log = Label(text='Введите ваш логин:')
+    text_log.pack()
+    registr_login = Entry()
+    registr_login.pack()
+    text_pass1 = Label(text='Введите ваш пароль:')
+    text_pass1.pack()
+    registr_pass1 = Entry()
+    registr_pass1.pack()
+    text_pass2 = Label(text='Введите ваш пароль еще раз:')
+    text_pass2.pack()
+    registr_pass2 = Entry(show='*')
+    registr_pass2.pack()
+    button_reg = Button(text='Зарегистрироваться!', command=lambda: save()) #работа функции сохранение при нажатии кнопки зарегистрироваться
+    button_reg.pack()
+
+# 5. Запоминание данных
+    def save():
+        login_pass_save = {}
+        login_pass_save[registr_login.get()] = registr_pass1.get()
+        f = open('login.txt', 'wb') #wb- запись инфы в тхт
+        pickle.dump(login_pass_save, f) #сохранение инфы в тхт
+        f.close()
+        login()
+
+
+# 4. функция входа в систему
+def login():
+    text_log = Label(text='Вы успешно зарегистрированы! Можете войти в систему')
+    text_log.pack()
+    text_ent_log = Label(text='Введите ваш логин:')
+    text_ent_log.pack()
+    enter_login = Entry()
+    enter_login.pack()
+    text_ent_pass = Label(text='Введите ваш пароль:')
+    text_ent_pass.pack()
+    enter_pass = Entry(show='*')
+    enter_pass.pack()
+    button_enter = Button(text='Войти', command=lambda: Proverka() ) #работа функции проверка при нажатии кнопки войти
+    button_enter.pack()
+
+
+# 6. При входе проверка на дурачка
+    def Proverka():
+        f = open('login.txt', 'rb') #чтение инфы из тхт
+        a = pickle.load(f)
+        f.close()
+        if enter_login.get() in a:
+            if enter_pass.get() == a[enter_login.get()]:
+                messagebox.showinfo('Вход в систему выполнен успешно!', 'Привет у тебя 2 пропущенных!')
+            else:
+                messagebox.showerror('Ошибка!', "Вы ввели неверный логин или пароль")
+        else:
+            messagebox.showerror('Ошибка','Неверный логин')
+
+
+registration()
+root.mainloop()
